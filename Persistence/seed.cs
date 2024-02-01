@@ -4,7 +4,7 @@ namespace Persistence
 {
     public class Seed
     {
-        public static async Task SeedData(Presistence.DataContext context)
+        public static async Task SeedData(DataContext context)
         {
             if (context.Activities.Any()) return;
             
