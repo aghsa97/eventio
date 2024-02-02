@@ -1,19 +1,22 @@
-import { Activity } from "@/app/types/activity"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { cn } from "@/lib/utils"
 import { CalendarDaysIcon } from "@heroicons/react/24/solid"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
 import { format } from "date-fns"
 import { useEffect } from "react"
-import { useForm } from "react-hook-form"
 import { z } from "zod"
+
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
+import { Activity } from "@/app/types/activity"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { cn } from "@/lib/utils"
 
 interface Props {
     selectedActivity: Activity | null;
+    isSubmitting: boolean;
+    handleCreateUpdateActivity: (activity: Activity) => void;
 }
 
 const formSchema = z.object({
@@ -37,7 +40,7 @@ const formSchema = z.object({
     }),
 })
 
-function ActivityForm({ selectedActivity }: Props) {
+function ActivityForm({ selectedActivity, handleCreateUpdateActivity, isSubmitting }: Props) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -53,7 +56,12 @@ function ActivityForm({ selectedActivity }: Props) {
     function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
-        console.log(values)
+        const date = values.date.toISOString()
+        if (selectedActivity) {
+            handleCreateUpdateActivity({ ...selectedActivity, ...values, date })
+        } else {
+            handleCreateUpdateActivity({ ...values, date, id: "" })
+        }
     }
 
     useEffect(() => {
@@ -65,6 +73,15 @@ function ActivityForm({ selectedActivity }: Props) {
                 date: new Date(selectedActivity.date),
                 city: selectedActivity.city,
                 venue: selectedActivity.venue,
+            })
+        } else {
+            form.reset({
+                title: "",
+                description: "",
+                category: "",
+                date: new Date(),
+                city: "",
+                venue: "",
             })
         }
     }, [selectedActivity, form])
@@ -176,7 +193,7 @@ function ActivityForm({ selectedActivity }: Props) {
                     )}
                 />
 
-                <Button type="submit">Submit</Button>
+                <Button type="submit" disabled={isSubmitting}>Submit</Button>
             </form>
         </Form>
     )

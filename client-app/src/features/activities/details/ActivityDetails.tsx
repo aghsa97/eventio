@@ -4,9 +4,10 @@ import { Activity } from '@/app/types/activity'
 
 interface Props {
     activity: Activity
+    handleDeleteActivity: (id: string) => void
 }
 
-function ActivityDetails({ activity }: Props) {
+function ActivityDetails({ activity, handleDeleteActivity }: Props) {
     return (
         <Card>
             <CardHeader>
@@ -22,7 +23,7 @@ function ActivityDetails({ activity }: Props) {
                     <p>{activity.venue}</p>
                     <p className="text-sm text-muted-foreground">{activity.city}</p>
                 </div>
-                <Button variant="secondary">Cancel</Button>
+                <Button variant="destructive" onClick={() => handleDeleteActivity(activity.id)}>Cancel</Button>
             </CardFooter>
         </Card>
     )
