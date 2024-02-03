@@ -1,35 +1,27 @@
-import { Activity } from "@/app/types/activity";
+import { observer } from "mobx-react-lite";
+import { useStore } from "@/app/stores/store";
 
 import ActivityDetails from "../details/ActivityDetails";
 import ActivityForm from "../form/ActivityForm";
 import ActivityList from "./ActivityList";
 
-interface Props {
-    activities: Activity[];
-    selectedActivity: Activity | null;
-    selectActivity: (id: string) => void;
-    isLoading: boolean;
-    handleCreateUpdateActivity: (activity: Activity) => void;
-    handleDeleteActivity: (id: string) => void;
-    isSubmitting: boolean;
-}
 
-function ActivityDashboard({ activities, selectActivity, selectedActivity, isLoading, isSubmitting, handleCreateUpdateActivity, handleDeleteActivity }: Props) {
+function ActivityDashboard() {
+    const { activityStore } = useStore();
     return (
         <div className="grid grid-flow-row grid-cols-7 gap-4">
             <div className="col-span-4 space-y-2">
-                <ActivityList activities={activities} selectActivity={selectActivity} isLoading={isLoading} />
+                <ActivityList />
             </div>
             <div className="col-span-3 space-y-4">
                 <div className="p-4 bg-white border border-border rounded-lg">
-                    <ActivityForm selectedActivity={selectedActivity}
-                        isSubmitting={isSubmitting}
-                        handleCreateUpdateActivity={handleCreateUpdateActivity} />
+                    <ActivityForm />
                 </div>
-                {selectedActivity && <ActivityDetails activity={selectedActivity} handleDeleteActivity={handleDeleteActivity} />}
+                {activityStore.selectedActivity && <ActivityDetails />}
             </div>
         </div>
     )
 }
 
-export default ActivityDashboard
+const ActivityDashboardOb = observer(ActivityDashboard)
+export default ActivityDashboardOb

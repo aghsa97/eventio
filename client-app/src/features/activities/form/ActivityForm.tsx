@@ -8,16 +8,10 @@ import { z } from "zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
-import { Activity } from "@/app/types/activity"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useStore } from "@/app/stores/store"
 import { cn } from "@/lib/utils"
-
-interface Props {
-    selectedActivity: Activity | null;
-    isSubmitting: boolean;
-    handleCreateUpdateActivity: (activity: Activity) => void;
-}
 
 const formSchema = z.object({
     title: z.string().min(2, {
@@ -40,7 +34,9 @@ const formSchema = z.object({
     }),
 })
 
-function ActivityForm({ selectedActivity, handleCreateUpdateActivity, isSubmitting }: Props) {
+function ActivityForm() {
+    const { activityStore } = useStore()
+    const { selectedActivity, submitting: isSubmitting, createActivity, updateActivity } = activityStore
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -58,9 +54,9 @@ function ActivityForm({ selectedActivity, handleCreateUpdateActivity, isSubmitti
         // ✅ This will be type-safe and validated.
         const date = values.date.toISOString()
         if (selectedActivity) {
-            handleCreateUpdateActivity({ ...selectedActivity, ...values, date })
+            updateActivity({ ...selectedActivity, ...values, date })
         } else {
-            handleCreateUpdateActivity({ ...values, date, id: "" })
+            createActivity({ ...values, date, id: "" })
         }
     }
 

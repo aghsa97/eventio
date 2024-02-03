@@ -1,24 +1,22 @@
+import { observer } from "mobx-react-lite";
+
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity } from "@/app/types/activity";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { useStore } from "@/app/stores/store";
 
-interface Props {
-    activities: Activity[];
-    isLoading: boolean;
-    selectActivity: (id: string) => void;
-}
 
-function ActivityList({ activities, selectActivity, isLoading }: Props) {
-    if (isLoading) return <div className="flex flex-col gap-4">
+function ActivityList() {
+    const { activityStore } = useStore()
+    if (activityStore.loadingInitial) return <div className="flex flex-col gap-4">
         <Skeleton className="h-52" />
         <Skeleton className="h-52" />
         <Skeleton className="h-52" />
     </div>
     return (
         <div className="grid gap-4">
-            {activities.map((activity) => (
-                <Card key={activity.id}>
+            {activityStore.activitiesByDate.map((activity, i) => ( // change to activity.id later
+                <Card key={i}>
                     <CardHeader>
                         <CardTitle>{activity.title}</CardTitle>
                         <CardDescription>{new Date(activity.date).toDateString()}</CardDescription>
@@ -31,7 +29,7 @@ function ActivityList({ activities, selectActivity, isLoading }: Props) {
                             <p>{activity.venue}</p>
                             <p className="text-sm text-muted-foreground">{activity.city}</p>
                         </div>
-                        <Button className="px-8 text-base" onClick={() => selectActivity(activity.id)}>Edit</Button>
+                        <Button className="px-8 text-base" onClick={() => activityStore.selectActivity(activity.id)}>Edit</Button>
                     </CardFooter>
                 </Card>
             ))}
@@ -39,4 +37,5 @@ function ActivityList({ activities, selectActivity, isLoading }: Props) {
     )
 }
 
-export default ActivityList
+const ActivityListObserver = observer(ActivityList)
+export default ActivityListObserver

@@ -1,13 +1,13 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Activity } from '@/app/types/activity'
+import { useStore } from '@/app/stores/store'
 
-interface Props {
-    activity: Activity
-    handleDeleteActivity: (id: string) => void
-}
 
-function ActivityDetails({ activity, handleDeleteActivity }: Props) {
+function ActivityDetails() {
+    const { activityStore } = useStore()
+    const { selectedActivity: activity, deleteActivity } = activityStore
+
+    if (!activity) return null
     return (
         <Card>
             <CardHeader>
@@ -23,7 +23,7 @@ function ActivityDetails({ activity, handleDeleteActivity }: Props) {
                     <p>{activity.venue}</p>
                     <p className="text-sm text-muted-foreground">{activity.city}</p>
                 </div>
-                <Button variant="destructive" onClick={() => handleDeleteActivity(activity.id)}>Cancel</Button>
+                <Button variant="destructive" onClick={() => deleteActivity(activity.id)}>Cancel</Button>
             </CardFooter>
         </Card>
     )
