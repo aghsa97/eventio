@@ -1,4 +1,5 @@
 import { CalendarDaysIcon } from "@heroicons/react/24/solid"
+import { useNavigate, useLocation } from "react-router-dom"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { format } from "date-fns"
@@ -12,6 +13,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useStore } from "@/app/stores/store"
 import { cn } from "@/lib/utils"
+import { v4 as uuid } from "uuid"
 
 const formSchema = z.object({
     title: z.string().min(2, {
@@ -36,6 +38,8 @@ const formSchema = z.object({
 
 function ActivityForm() {
     const { activityStore } = useStore()
+    const navigate = useNavigate()
+    const { pathname } = useLocation()
     const { selectedActivity, submitting: isSubmitting, createActivity, updateActivity } = activityStore
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -49,19 +53,21 @@ function ActivityForm() {
         },
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
         const date = values.date.toISOString()
         if (selectedActivity) {
             updateActivity({ ...selectedActivity, ...values, date })
         } else {
-            createActivity({ ...values, date, id: "" })
+            const id = uuid()
+            const createdActivity = await createActivity({ ...values, date, id })
+            navigate(`/activities/${createdActivity?.id}`)
         }
     }
 
     useEffect(() => {
-        if (selectedActivity) {
+        if (selectedActivity && !pathname.includes("createActivity")) {
             form.reset({
                 title: selectedActivity.title,
                 description: selectedActivity.description,
@@ -80,7 +86,7 @@ function ActivityForm() {
                 venue: "",
             })
         }
-    }, [selectedActivity, form])
+    }, [selectedActivity, form, pathname])
 
     return (
         <Form {...form}>

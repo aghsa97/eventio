@@ -1,5 +1,4 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { v4 as uuid } from "uuid";
 
 import { Activity } from "../types/activity";
 import agent from "../api/agent";
@@ -37,24 +36,41 @@ export default class ActivityStore {
     }
   };
 
-  selectActivity = (id: string) => {
-    this.selectedActivity = this.activityRegistry.get(id) ?? null;
+  private getActivity = (id: string) => {
+    return this.activityRegistry.get(id);
   };
 
-  cancelSelectedActivity = () => {
-    this.selectedActivity = null;
+  loadActivity = async (id: string) => {
+    let activity = this.getActivity(id);
+    if (activity) {
+      this.selectedActivity = activity;
+    } else {
+      this.loadingInitial = true;
+      try {
+        activity = await agent.Activities.details(id);
+        runInAction(() => {
+          this.selectedActivity = activity ?? null;
+          this.loadingInitial = false;
+        });
+      } catch (error) {
+        console.log(error);
+        runInAction(() => {
+          this.loadingInitial = false;
+        });
+      }
+    }
   };
 
   createActivity = async (activity: Activity) => {
     this.submitting = true;
     try {
-      activity.id = uuid();
       await agent.Activities.create(activity);
       runInAction(() => {
         this.activityRegistry.set(activity.id, activity);
         this.selectedActivity = activity;
         this.submitting = false;
       });
+      return activity;
     } catch (error) {
       console.log(error);
       runInAction(() => {

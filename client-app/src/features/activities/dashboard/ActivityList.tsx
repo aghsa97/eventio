@@ -1,4 +1,5 @@
 import { observer } from "mobx-react-lite";
+import { Link } from "react-router-dom";
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -29,7 +30,9 @@ function ActivityList() {
                             <p>{activity.venue}</p>
                             <p className="text-sm text-muted-foreground">{activity.city}</p>
                         </div>
-                        <Button className="px-8 text-base" onClick={() => activityStore.selectActivity(activity.id)}>Edit</Button>
+                        <Link to={`/activities/${activity.id}`}>
+                            <Button className="px-8 text-base">Edit</Button>
+                        </Link>
                     </CardFooter>
                 </Card>
             ))}
