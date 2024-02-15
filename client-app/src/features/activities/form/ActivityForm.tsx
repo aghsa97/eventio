@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { format } from "date-fns"
 import { useEffect } from "react"
+import { v4 as uuid } from "uuid"
 import { z } from "zod"
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -13,7 +14,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useStore } from "@/app/stores/store"
 import { cn } from "@/lib/utils"
-import { v4 as uuid } from "uuid"
 
 const formSchema = z.object({
     title: z.string().min(2, {
@@ -56,7 +56,11 @@ function ActivityForm() {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
-        const date = values.date.toISOString()
+
+        // 🐛: date is changing when using toIsoString()
+        const fixedToUTCTime = new Date(values.date.setHours(23, 0, 0, 0)) // a trick to fix the date
+        const date = fixedToUTCTime.toISOString().split("T")[0]
+
         if (selectedActivity) {
             updateActivity({ ...selectedActivity, ...values, date })
         } else {
@@ -87,6 +91,7 @@ function ActivityForm() {
             })
         }
     }, [selectedActivity, form, pathname])
+
 
     return (
         <Form {...form}>
