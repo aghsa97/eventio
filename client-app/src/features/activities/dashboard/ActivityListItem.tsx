@@ -24,12 +24,10 @@ function ActivityListItem({ activity }: ActivityListItemProps) {
     return (
         <Card>
             <CardHeader>
-                {/* User Image GET a roundom pic*/}
                 <div className='flex items-start gap-4'>
-                    <img src={userImage[0]}
-                        alt="user"
-                        className="w-12 h-12 rounded-full" />
-                    <div className='flex flex-col items-start gap-'>
+                    <img src={`/categoryImages/${activity.category}.jpg`} alt="user" className="h-12 w-12 rounded-full object-cover" />
+
+                    <div className='flex flex-col items-start justify-center gap-0.5'>
                         <CardTitle>{activity.title}</CardTitle>
                         <CardDescription>{activity.city}, {activity.venue}</CardDescription>
                     </div>
@@ -45,10 +43,11 @@ function ActivityListItem({ activity }: ActivityListItemProps) {
                             <img key={idx} src={img} alt="user" className="w-6 h-6 rounded-full cursor-pointer first:ml-0 -ml-4 hover:first:-ml-0 hover:scale-150 transition-all duration-150 ease-in-out" />
                         ))}
                         <span className='w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-semibold -ml-4 cursor-pointer'>+47</span>
+                        <span className='text-sm text-muted-foreground'>•</span> <span className='text-sm text-muted-foreground hover:underline cursor-pointer'>@hostname</span>
                     </div>
                 </div>
                 <Link to={`/activities/${activity.id}`}>
-                    <Button className="px-8 text-base">View</Button>
+                    <Button className="px-6 rounded-full bg-muted hover:bg-muted/50 text-zinc-950">View</Button>
                 </Link>
             </CardFooter>
         </Card>
