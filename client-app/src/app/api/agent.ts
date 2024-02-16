@@ -1,5 +1,8 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
+import { toast } from "sonner";
+
 import { Activity } from "../types/activity";
+import { Routes } from "../router/Routes";
 
 const sleep = (delay: number) => {
   return new Promise((resolve) => {
@@ -13,9 +16,29 @@ axios.interceptors.response.use(
     await sleep(1000);
     return response;
   },
-  (error) => {
-    console.log(error);
-    return Promise.reject(error);
+  (erorr: AxiosError) => {
+    const { data, status, config } = erorr.response as AxiosResponse;
+    switch (status) {
+      case 400:
+        if (
+          config.method === "get" &&
+          Object.prototype.hasOwnProperty.call(data.errors, "id")
+        ) {
+          Routes.navigate("/not-found");
+        }
+        toast.error("bad request");
+        break;
+      case 401:
+        toast.error("unauthorised");
+        break;
+      case 404:
+        Routes.navigate("/not-found");
+        break;
+      case 500:
+        toast.error("server error");
+        break;
+    }
+    return Promise.reject(erorr);
   }
 );
 
