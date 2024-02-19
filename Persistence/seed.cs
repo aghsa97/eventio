@@ -1,16 +1,47 @@
 using Domain;
+using Microsoft.AspNetCore.Identity;
 
 namespace Persistence
 {
     public class Seed
     {
-        public static async Task SeedData(DataContext context)
+        public static async Task SeedData(DataContext context, UserManager<User> userManager)
         {
+            if (!userManager.Users.Any())
+            {
+                var users = new List<User>
+                {
+                    new() {
+                        DisplayName = "Bob",
+                        UserName = "bob",
+                        Email = "bob@test.com"
+                    },
+                    new()
+                    {
+                        DisplayName = "Tom",
+                        UserName = "tom",
+                        Email = "tom@test.com"
+                    },
+                    new()
+                    {
+                        DisplayName = "Jane",
+                        UserName = "jane",
+                        Email = "jane@test.com"
+                    }
+
+                };
+                    Console.WriteLine("User List");
+                    foreach (var user in users)
+                    {
+                        await userManager.CreateAsync(user, "Pa$$w0rd");
+                        Console.WriteLine("User created");
+                    }
+            }
             if (context.Activities.Any()) return;
             
             var activities = new List<Activity>
             {
-                new Activity
+                new()
                 {
                     Title = "Past Activity 1 today",
                     Date = DateTime.Today.AddMonths(-2),
@@ -19,7 +50,7 @@ namespace Persistence
                     City = "London",
                     Venue = "Pub",
                 },
-                new Activity
+                new()
                 {
                     Title = "Past Activity 2",
                     Date = DateTime.Today.AddMonths(-1),
@@ -28,7 +59,7 @@ namespace Persistence
                     City = "Paris",
                     Venue = "Louvre",
                 },
-                new Activity
+                new()
                 {
                     Title = "Future Activity 1",
                     Date = DateTime.Today.AddMonths(1),
@@ -37,7 +68,7 @@ namespace Persistence
                     City = "London",
                     Venue = "Natural History Museum",
                 },
-                new Activity
+                new()
                 {
                     Title = "Future Activity 2",
                     Date = DateTime.Today.AddMonths(2),
@@ -46,7 +77,7 @@ namespace Persistence
                     City = "London",
                     Venue = "O2 Arena",
                 },
-                new Activity
+                new()
                 {
                     Title = "Future Activity 3",
                     Date = DateTime.Today.AddMonths(3),
@@ -55,7 +86,7 @@ namespace Persistence
                     City = "London",
                     Venue = "Another pub",
                 },
-                new Activity
+                new()
                 {
                     Title = "Future Activity 4",
                     Date = DateTime.Today.AddMonths(4),
@@ -64,7 +95,7 @@ namespace Persistence
                     City = "London",
                     Venue = "Yet another pub",
                 },
-                new Activity
+                new()
                 {
                     Title = "Future Activity 5",
                     Date = DateTime.Today.AddMonths(5),
@@ -73,7 +104,7 @@ namespace Persistence
                     City = "London",
                     Venue = "Just another pub",
                 },
-                new Activity
+                new()
                 {
                     Title = "Future Activity 6",
                     Date = DateTime.Today.AddMonths(6),
@@ -82,7 +113,7 @@ namespace Persistence
                     City = "London",
                     Venue = "Roundhouse Camden",
                 },
-                new Activity
+                new()
                 {
                     Title = "Future Activity 7",
                     Date = DateTime.Today.AddMonths(7),
@@ -91,7 +122,7 @@ namespace Persistence
                     City = "London",
                     Venue = "Somewhere on the Thames",
                 },
-                new Activity
+                new()
                 {
                     Title = "Future Activity 8",
                     Date = DateTime.Today.AddMonths(8),
