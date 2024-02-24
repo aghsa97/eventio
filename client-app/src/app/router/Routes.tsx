@@ -5,6 +5,7 @@ import ActivityDashboardOb from '@/features/activities/dashboard/ActivityDashboa
 import ActivityForm from '@/features/activities/form/ActivityForm'
 import ActivityDetails from '@/features/activities/details/ActivityDetails'
 import NotFound from '@/features/errors/NotFound'
+import Login from '@/features/users/Login'
 
 
 const routes: RouteObject[] = [
@@ -17,7 +18,8 @@ const routes: RouteObject[] = [
             { path: 'activities/:id', element: <ActivityDetails /> },
             { path: 'createActivity', element: <ActivityForm key='create' /> },
             { path: 'not-found', element: <NotFound /> },
-            { path: '*', element: <Navigate replace to='/not-found' /> },
+            { path: 'login', element: <Login /> },
+            { path: '*', element: <Navigate replace to='/not-found' /> }
         ],
     },
 ]

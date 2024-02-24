@@ -3,12 +3,20 @@ import { toast } from "sonner";
 
 import { Activity } from "../types/activity";
 import { Routes } from "../router/Routes";
+import { User, UserFormValues } from "@/features/users/user";
+import { store } from "../stores/store";
 
 const sleep = (delay: number) => {
   return new Promise((resolve) => {
     setTimeout(resolve, delay);
   });
 };
+
+axios.interceptors.request.use((config) => {
+  const token = store.commonStore.token;
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
 
 axios.defaults.baseURL = "http://localhost:5000/api";
 axios.interceptors.response.use(
@@ -60,7 +68,14 @@ const Activities = {
   delete: (id: string) => requests.del(`/activities/${id}`),
 };
 
+const Account = {
+  current: () => requests.get<User>("/account"),
+  login: (user: UserFormValues) => requests.post("/account/login", user),
+  register: (user: UserFormValues) => requests.post("/account/register", user),
+};
+
 const agent = {
   Activities,
+  Account,
 };
 export default agent;
