@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Infrastructure.Security
@@ -14,22 +15,23 @@ namespace Infrastructure.Security
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly DataContext _context;
-        private readonly IUserAccessor _userAccessor;
-        public IsHostRequirementHandler(IHttpContextAccessor httpContextAccessor, DataContext context, IUserAccessor userAccessor)
+        public IsHostRequirementHandler(IHttpContextAccessor httpContextAccessor, DataContext context)
         {
-            _userAccessor = userAccessor;
             _context = context;
             _httpContextAccessor = httpContextAccessor;
         }
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, IsHostRequirement requirement)
         {
-            var currentUserName = context.User.FindFirstValue(ClaimTypes.Name);
+            var currentUserId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (currentUserName == null) return Task.CompletedTask;
+            if (currentUserId == null) return Task.CompletedTask;
 
             var activityId = Guid.Parse(_httpContextAccessor.HttpContext.Request.RouteValues.SingleOrDefault(x => x.Key == "id").Value.ToString());
 
-            var attendee = _context.ActivityAttendees.FindAsync(activityId, currentUserName).Result;
+            var attendee = _context.ActivityAttendees
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.UserId == currentUserId && x.ActivityId == activityId)
+                .Result;
 
             if (attendee == null) return Task.CompletedTask;
 
