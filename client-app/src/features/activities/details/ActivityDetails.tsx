@@ -101,6 +101,7 @@ function ActivityDetails() {
                 <ActivityForm key='edit' />
             </div>
             <div className='w-1/2'>
+                {/* Attendees componenet goes here ⚠️ */}
                 <div className='w-full bg-white border rounded-md p-4 space-y-6'>
                     <h1 className='text-xl font-semibold'>Attending</h1>
                     <div className='flex flex-col gap-4'>
