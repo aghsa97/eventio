@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Activity } from '@/app/types/activity'
+import { IActivity } from '@/app/types/activity'
 import { Button } from '@/components/ui/button'
 
 interface ActivityListItemProps {
-    activity: Activity
+    activity: IActivity
 }
 
 function ActivityListItem({ activity }: ActivityListItemProps) {

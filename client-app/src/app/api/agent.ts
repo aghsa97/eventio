@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "sonner";
 
-import { Activity } from "../types/activity";
+import { IActivity } from "../types/activity";
 import { Routes } from "../router/Routes";
 import { User, UserFormValues } from "@/features/users/user";
 import { store } from "../stores/store";
@@ -60,10 +60,10 @@ const requests = {
 };
 
 const Activities = {
-  list: () => requests.get<Activity[]>("/activities"),
-  details: (id: string) => requests.get<Activity>(`/activities/${id}`),
-  create: (activity: Activity) => requests.post("/activities", activity),
-  update: (activity: Activity) =>
+  list: () => requests.get<IActivity[]>("/activities"),
+  details: (id: string) => requests.get<IActivity>(`/activities/${id}`),
+  create: (activity: IActivity) => requests.post("/activities", activity),
+  update: (activity: IActivity) =>
     requests.put(`/activities/${activity.id}`, activity),
   delete: (id: string) => requests.del(`/activities/${id}`),
   attend: (id: string) => requests.post(`/activities/${id}/attend`, {}),
